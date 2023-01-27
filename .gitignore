@@ -21,3 +21,5 @@ test/*.wasm
 *.tmp
 *.wasm
 *.wat
+*.prof*
+/results.txt
