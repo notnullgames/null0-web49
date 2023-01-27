@@ -23,3 +23,4 @@ test/*.wasm
 *.wat
 *.prof*
 /results.txt
+/build/

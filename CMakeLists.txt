@@ -1,0 +1,47 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+PROJECT(null0)
+SET(CMAKE_C_STANDARD 17)
+INCLUDE(FetchContent)
+
+# WARNING: comment these for normal libretro core. They are bad if you don't want games to do terrible things.
+
+# Adding Raylib for graphics
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
+set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # don't build the supplied example games
+FetchContent_Declare(raylib GIT_REPOSITORY https://github.com/raysan5/raylib.git GIT_TAG master)
+FetchContent_MakeAvailable(raylib)
+
+# this will allow the rom to hit network resources
+ADD_DEFINITIONS(-DNULL0_HTTP)
+
+# allow main.wasm to write to itself (in overlay FS, not the zip) for self-updating
+# ADD_DEFINITIONS(-DNULL0_SELFWRITE)
+
+# Add PhysFS for filesystm/zip abstraction
+SET(PHYSFS_ARCHIVE_ZIP ON CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_7Z OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_GRP OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_WAD OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_HOG OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_MVL OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_QPAK OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_SLB OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_ISO9660 OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_ARCHIVE_VDF OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_BUILD_STATIC ON CACHE BOOL "" FORCE)
+SET(PHYSFS_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_BUILD_TEST OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+SET(PHYSFS_DISABLE_INSTALL OFF CACHE BOOL "" FORCE)
+FETCHCONTENT_DECLARE(physfs GIT_REPOSITORY https://github.com/icculus/physfs.git GIT_TAG main)
+FETCHCONTENT_MAKEAVAILABLE(physfs)
+INCLUDE_DIRECTORIES(${physfs_SOURCE_DIR}/src)
+
+# Add system's copy of curl
+# FIND_PACKAGE(CURL REQUIRED)
+# INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
+
+FILE(GLOB_RECURSE SOURCE_FILES_CLI CONFIGURE_DEPENDS src/*.c api/*.c interp/*.c opt/*.c main/null0_cli.c)
+ADD_EXECUTABLE (${PROJECT_NAME} ${SOURCE_FILES_CLI})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE raylib physfs-static)
+

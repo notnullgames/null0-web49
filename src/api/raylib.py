@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 def toext(t):
     if t == 'int' or t == 'bool':
@@ -13,9 +14,9 @@ def toext(t):
     if t == 'unsigned long long':
         return 'i64_u'
 
-os.chdir('src/api')
+os.chdir(Path(__file__).resolve().parent)
 
-with open('raylib.json') as f:
+with open('raylib_api.json') as f:
     src = json.load(f)
 
 with open('raylib.c', 'w') as outfile:
