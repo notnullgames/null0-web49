@@ -20,6 +20,12 @@ static web49_interp_data_t web49_main_import_silly(web49_interp_t interp) {
   return (web49_interp_data_t){0};
 }
 
+static web49_interp_data_t null0_log(web49_interp_t interp) {
+  web49_interp_data_t ret;
+  printf("%s\n", (const char*)&interp.memory[interp.locals[0].i32_u]);
+  return ret;
+}
+
 web49_env_func_t web49_main_import_func(void* state, const char* mod, const char* func) {
   if (!strcmp(mod, "wasi_snapshot_preview1")) {
     return web49_api_import_wasi(func);
@@ -27,10 +33,15 @@ web49_env_func_t web49_main_import_func(void* state, const char* mod, const char
     if (!strcmp(func, "emscripten_asm_const_int")) {
       return &web49_main_import_silly;
     }
-    web49_env_func_t ret = web49_api_import_raylib(func);
-    if (ret == NULL) {
-      __builtin_trap();
+
+    if (!strcmp(func, "null0_log")) {
+      return &null0_log;
     }
+
+    web49_env_func_t ret = web49_api_import_raylib(func);
+    // if (ret == NULL) {
+    //   __builtin_trap();
+    // }
     return ret;
   } else {
     return NULL;
@@ -97,14 +108,16 @@ int web49_file_main(const char* inarg, const char** args) {
 
   uint32_t cart_load = 0;
   uint32_t cart_update = 0;
+
   web49_section_export_t exports = web49_module_get_section(mod, WEB49_SECTION_ID_EXPORT).export_section;
   for (size_t j = 0; j < exports.num_entries; j++) {
     web49_section_export_entry_t entry = exports.entries[j];
     if (!strcmp(entry.field_str, "load")) {
       cart_load = entry.index;
-    }
-    if (!strcmp(entry.field_str, "update")) {
+    } else if (!strcmp(entry.field_str, "update")) {
       cart_update = entry.index;
+    } else {
+      // fprintf(stderr, "unknown export: %s\n", entry.field_str);
     }
   }
 
@@ -112,7 +125,7 @@ int web49_file_main(const char* inarg, const char** args) {
   web49_opt_tree_module(&mod);
 
   web49_interp_t interp = web49_interp_module(mod, args);
-  web49_free_module(mod);
+  // web49_free_module(mod);
   interp.import_func = web49_main_import_func;
   interp.import_state = NULL;
   if (cart_load) {
