@@ -55,7 +55,7 @@ int web49_file_main(const char* inarg, const char** args) {
         fprintf(stderr, "Could not open file: %s\n", inarg);
         return 1;
       }
-      size_t b = fread(str, 4, 1, fptr1);
+      fread(str, 4, 1, fptr1);
       fclose(fptr1);
       isZip = memcmp(str, "PK\3\4", 4) == 0;
       isWasm = memcmp(str, "\0asm", 4) == 0;
