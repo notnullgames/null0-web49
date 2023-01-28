@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# This will build a C-based cart
+
+set -e
+
+DIR="$( dirname -- "${BASH_SOURCE[0]}"; )"
+
+CARTNAME=$(basename "$1" .c)
+
+mkdir -p ${DIR}/raylib/lib
+if [ ! -f "${DIR}/raylib/lib/raudio.o" ]; then
+  emcc -I${DIR}/raylib/include -O2 -c ${DIR}/raylib/src/raudio.c -o ${DIR}/raylib/lib/raudio.o
+fi
+
+if [ ! -f "${DIR}/raylib/lib/rmodels.o" ]; then
+emcc -I${DIR}/raylib/include -O2 -c ${DIR}/raylib/src/rmodels.c -o ${DIR}/raylib/lib/rmodels.o
+fi
+
+if [ ! -f "${DIR}/raylib/lib/rshapes.o" ]; then
+emcc -I${DIR}/raylib/include -O2 -c ${DIR}/raylib/src/rshapes.c -o ${DIR}/raylib/lib/rshapes.o
+fi
+
+if [ ! -f "${DIR}/raylib/lib/rtext.o" ]; then
+emcc -I${DIR}/raylib/include -O2 -c ${DIR}/raylib/src/rtext.c -o ${DIR}/raylib/lib/rtext.o
+fi
+
+if [ ! -f "${DIR}/raylib/lib/rtextures.o" ]; then
+emcc -I${DIR}/raylib/include -O2 -c ${DIR}/raylib/src/rtextures.c -o ${DIR}/raylib/lib/rtextures.o
+fi
+
+if [ ! -f "${DIR}/raylib/lib/utils.o" ]; then
+emcc -I${DIR}/raylib/include -O2 -c ${DIR}/raylib/src/utils.c -o ${DIR}/raylib/lib/utils.o
+fi
+
+
+emcc -O2 ${DIR}/raylib/lib/*o -I${DIR}/raylib/include -s WARN_ON_UNDEFINED_SYMBOLS=0 -o build/${CARTNAME}.js "${1}"

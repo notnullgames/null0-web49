@@ -36,6 +36,7 @@ export const BLANK: Color     = { r:  0,   g: 0,   b: 0  , a: 0   }
 export const MAGENTA: Color   = { r:  255, g: 0,   b: 255, a: 255 }
 export const RAYWHITE: Color  = { r:  245, g: 245, b: 245, a: 255 }
 
+
 // Log a string
 @external("env", "null0_log")
 declare function _log(text: ArrayBuffer): void
@@ -50,21 +51,6 @@ export function fatal(message: string, filename: string, lineNumber: i32, column
   return _fatal(String.UTF8.encode(message, true), String.UTF8.encode(filename, true), lineNumber, columnNumber)
 }
 
-@external("env", "InitWindow")
-declare function _InitWindow(width: i32, height: i32, title: ArrayBuffer): void
-export function InitWindow (width: i32, height: i32, title: string): void {
-  return _InitWindow(width, height, String.UTF8.encode(title, true))
-}
-
-@external("env", "CloseWindow")
-export declare function CloseWindow(): void
-
-@external("env", "BeginDrawing")
-export declare function BeginDrawing(): void
-
-@external("env", "EndDrawing")
-export declare function EndDrawing(): void
-
 @external("env", "ClearBackground")
 export declare function ClearBackground(color: Color): void
 
@@ -74,36 +60,3 @@ export function DrawText(text: string, x: i32, y: i32, size: i32, color: Color):
   return _DrawText(String.UTF8.encode(text, true), x, y, size, color)
 }
 
-@external("env", "WindowShouldClose")
-export declare function WindowShouldClose(): bool
-
-
-/*
-    if (!strcmp(func, "random_get")) {
-        return &web49_api_import_wasi_random_get;
-    } else if (!strcmp(func, "fd_seek")) {
-        return &web49_api_import_wasi_fd_seek;
-    } else if (!strcmp(func, "args_get")) {
-        return &web49_api_import_wasi_args_get;
-    } else if (!strcmp(func, "args_sizes_get")) {
-        return &web49_api_import_wasi_args_sizes_get;
-    } else if (!strcmp(func, "clock_time_get")) {
-        return &web49_api_import_wasi_clock_time_get;
-    } else if (!strcmp(func, "fd_close")) {
-        return &web49_api_import_wasi_fd_close;
-    } else if (!strcmp(func, "fd_prestat_get")) {
-        return &web49_api_import_wasi_fd_prestat_get;
-    } else if (!strcmp(func, "fd_prestat_dir_name")) {
-        return &web49_api_import_wasi_fd_prestat_dir_name;
-    } else if (!strcmp(func, "fd_fdstat_get")) {
-        return &web49_api_import_wasi_fd_fdstat_get;
-    } else if (!strcmp(func, "path_open")) {
-        return &web49_api_import_wasi_path_open;
-    } else if (!strcmp(func, "fd_read")) {
-        return &web49_api_import_wasi_fd_read;
-    } else if (!strcmp(func, "fd_write")) {
-        return &web49_api_import_wasi_fd_write;
-    } else if (!strcmp(func, "proc_exit")) {
-        return &web49_api_import_wasi_proc_exit;
-    }
-    */

@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "physfs.h"
+#include "raylib.h"
 
 #include "../api/api.h"
 #include "../ast.h"
@@ -119,9 +120,23 @@ int web49_file_main(const char* inarg, const char** args) {
   // web49_free_module(mod);
   interp.import_func = web49_main_import_func;
   interp.import_state = NULL;
+
+  InitWindow(320, 240, "null0");
+
   if (cart_load) {
     web49_interp_block_run(&interp, &interp.funcs[cart_load]);
   }
+
+  if (cart_update) {
+    while (!WindowShouldClose()) {
+      BeginDrawing();
+      web49_interp_block_run(&interp, &interp.funcs[cart_update]);
+      EndDrawing();
+    }
+  }
+
+  CloseWindow();
+
   web49_free_interp(interp);
 
   return 0;

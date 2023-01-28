@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# This will build an assemblyscript-based cart
+
+set -e
+
+DIR="$( dirname -- "${BASH_SOURCE[0]}"; )"
+
+CARTNAME=$(basename "$1" .ts)
+
+npx -y --package=assemblyscript -c "asc --use abort=fatal --lib '${DIR}/null0.ts' --runtime stub --exportRuntime --optimize --stats --bindings esm '${1}' -t 'build/${CARTNAME}.wat' -o 'build/${CARTNAME}.wasm'"
+
+mkdir -p "build/${CARTNAME}"
+cd "build/${CARTNAME}"
+cp "../${CARTNAME}.wasm" main.wasm
+zip -r "../${CARTNAME}.null0" .

@@ -18,19 +18,19 @@ null0: ./build/null0 ## Build standalone host
 
 libretro: ./build/rimage_libretro.dylib ## Build retroarch core
 
-./build/log.null0:
+./build/log.null0: carts/log.ts
 	@echo "building cart:log"
-	@npx -y --package=assemblyscript -c 'asc --use abort=fatal --lib src/carts/null0.ts --runtime stub --exportRuntime --optimize --stats --bindings esm \
-		src/carts/log.ts -t build/log.wat -o build/log.wasm' && \
-	mkdir -p build/log && cd build/log && cp ../log.wasm main.wasm && zip -r ../log.null0 .
+	./carts/build_assemblyscript_cart carts/log.ts
 
-./build/raylib.null0:
+./build/raylib.null0: carts/raylib.ts
 	@echo "building cart:raylib"
-	@npx -y --package=assemblyscript -c 'asc --use abort=fatal --lib src/carts/null0.ts --runtime stub --exportRuntime --optimize --stats --bindings esm \
-		src/carts/raylib.ts -t build/raylib.wat -o build/raylib.wasm' && \
-	mkdir -p build/raylib && cd build/raylib && cp ../raylib.wasm main.wasm && zip -r ../raylib.null0 .
+	./carts/build_assemblyscript_cart carts/raylib.ts
 
-carts: ./build/log.null0 ./build/raylib.null0 ## Build some demo carts
+./build/raylib2.null0: carts/raylib2.c
+	@echo "building cart:raylib"
+	./carts/build_c_cart carts/raylib2.c
+
+carts: ./build/log.null0 ./build/raylib.null0 ./build/raylib2.null0 ## Build some demo carts
 
 clean: ## Delete built files
 	@rm -rf build
