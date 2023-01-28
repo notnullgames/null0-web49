@@ -16,33 +16,24 @@
 #include "../opt/tree.h"
 #include "../read_bin.h"
 
-static web49_interp_data_t web49_main_import_silly(web49_interp_t interp) {
-  return (web49_interp_data_t){0};
-}
-
-static web49_interp_data_t null0_log(web49_interp_t interp) {
-  web49_interp_data_t ret;
-  printf("%s\n", (const char*)&interp.memory[interp.locals[0].i32_u]);
-  return ret;
-}
-
 web49_env_func_t web49_main_import_func(void* state, const char* mod, const char* func) {
   if (!strcmp(mod, "wasi_snapshot_preview1")) {
     return web49_api_import_wasi(func);
   } else if (!strcmp(mod, "env")) {
-    if (!strcmp(func, "emscripten_asm_const_int")) {
-      return &web49_main_import_silly;
+    web49_env_func_t r;
+
+    r = web49_api_import_null0(func);
+    if (r) {
+      return r;
     }
 
-    if (!strcmp(func, "null0_log")) {
-      return &null0_log;
+    r = web49_api_import_raylib(func);
+    if (r) {
+      return r;
     }
 
-    web49_env_func_t ret = web49_api_import_raylib(func);
-    // if (ret == NULL) {
-    //   __builtin_trap();
-    // }
-    return ret;
+    // __builtin_trap();
+    return NULL;
   } else {
     return NULL;
   }

@@ -18,19 +18,18 @@ These are the programming languages currently supported for making your game. Yo
 
 
 ```
-# configure the build for your system
-cmake -B build .
+# get quick reference for make tasks
+make
 
-# make all targets
-make -C build
-
-# make just the native runtime
-make -C build null0
+# make just the native runtime host
+make null0
 
 # make just the libretro core
-make -C build libretro
+make libretro
 
 # build some demo-carts
-make -C build cart:log
-make -C build cart:draw
+make carts
+
+# run the native host with a cart
+./build/null0 ./build/log.null0
 ```
